@@ -1,0 +1,28 @@
+{
+  "name": "dsh-wallpaper",
+  "version": "0.1.0",
+  "description": "DSH wallpaper plugin: choose an image/gradient as the DSH web background, with local-folder browsing, crop, blur, dim, panel translucency and position controls.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "README.md"
+  ],
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "immediately": true
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "license": "MIT"
+}

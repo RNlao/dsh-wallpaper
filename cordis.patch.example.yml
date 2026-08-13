@@ -1,0 +1,16 @@
+# dsh-wallpaper 加载行 —— 合并进 $DSH_HOME/profiles/web/cordis.patch.yml
+#
+# 该文件目前若为 `[]`，直接用下面的 `insert` 段替换 `[]`；
+# 若已有其它 patch 条目，把下面这段 append 到顶层数组里（不要覆盖已有内容）。
+#
+# `name` 必须是能被解析到的包名（= package.json 里的 name），
+# 安装插件到 profile 后重启 dsh web 即可生效：
+#   dsh plugin --profile web add github:<你的账号>/dsh-wallpaper
+#   # 或本地路径： dsh plugin --profile web add /path/to/dsh-wallpaper
+#
+# 想临时禁用（不删除）：改为
+#   - { id: dsh-wallpaper, disabled: true }
+
+- insert:
+    - id: dsh-wallpaper
+      name: dsh-wallpaper
