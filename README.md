@@ -23,18 +23,21 @@ dsh-wallpaper/
 
 ## 安装（持久化）
 
-本插件有 **host 半**（读写磁盘图片）和 **client 半**（界面）。DSH 全局安装时，loader 用 Node ESM 从**全局 node_modules** 解析插件，因此 host 半必须能被全局解析到。分两步：
+本插件有 **host 半**（读写磁盘图片）和 **client 半**（界面）。安装时**必须把它声明为 profile 的依赖**（而非手动复制进 node_modules），DSH 从 profile 目录解析插件时才能找到它：
 
 ```bash
-# 1. clone 仓库并链接到全局 node_modules（让 host 半能被 loader import）
-git clone https://github.com/RNlao/dsh-wallpaper.git
-ln -sfn "$(pwd)/dsh-wallpaper" "$(npm root -g)/dsh-wallpaper"
+cd ~/.dsh/profiles/web
+pnpm add 'dsh-wallpaper@link:/path/to/dsh-wallpaper'
 
-# 2. 注册为 profile 的 bundle（dsh plugin add 会自动加入 dsh.profile.bundles）
-dsh plugin --profile web add "$(pwd)/dsh-wallpaper"
+# 确认 dsh.profile.bundles 含 "dsh-wallpaper"（dsh plugin add 会自动加入；
+# 手动安装则确认 package.json 里 dependencies 与 bundles 都声明了它）
 
-# 3. 重启 dsh web
+# 重启 dsh web
 ```
+
+> 也可用 `dsh plugin --profile web add github:RNlao/dsh-wallpaper`（内部即 pnpm add，会自动写入 `dependencies` 并 reconcile 进 `dsh.profile.bundles`）。
+
+> 关键点：`dsh-wallpaper` 必须同时出现在 `dependencies` 和 `dsh.profile.bundles` 里，且 `node_modules/dsh-wallpaper` 存在——否则 DSH 从 profile 目录 import host 半时抛 `ERR_MODULE_NOT_FOUND`。全局 `npm install -g` 无效，Node ESM 不会从全局包解析。
 
 重启后打开 **设置（左下角）→ 壁纸 / Wallpaper**。
 
