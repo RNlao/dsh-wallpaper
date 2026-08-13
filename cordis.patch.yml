@@ -1,0 +1,12 @@
+# dsh-wallpaper bundle patch：作为 profile layer 应用。
+#
+# 本包同时声明 dsh.bundle（此 patch）与 dsh.client（浏览器半），因此
+# `dsh plugin --profile web add <本包>` 后会被自动加入 dsh.profile.bundles，
+# 无需在 profile 的 cordis.patch.yml 里手写任何配置；重启 dsh web 即生效。
+#
+# 这里只 insert 自己的 host 半（lib/index.js）。浏览器半由 dsh.client 元数据
+# 被 dsh-client-modules 扫描并通过 /plugins/dsh-wallpaper/client.js 提供。
+
+- insert:
+    - id: dsh-wallpaper
+      name: dsh-wallpaper

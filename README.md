@@ -8,39 +8,32 @@
 
 ```
 dsh-wallpaper/
-├── package.json          # dsh.client 元数据 + exports["./client"]
+├── package.json          # dsh.bundle（自动装载）+ dsh.client（浏览器半）+ exports
+├── cordis.patch.yml      # bundle patch：insert 自己的 host 半
 ├── lib/
-│   ├── index.js          # host 半（空插件，仅作为 loader 配置项，让 client 被扫描）
+│   ├── index.js          # host 半（空插件，仅作为 loader 配置项）
 │   └── client.js         # client 半（window.__ModuleLoader__.load 格式，实际功能都在这里）
 ├── dynamic/              # 动态插件版本（cordis preset 临时运行用，见文末）
 │   ├── client.js
 │   └── host.js
-├── cordis.patch.example.yml
 └── README.md
 ```
 
-## 安装（持久化）
+## 安装（持久化，免手写配置）
 
-> 原理：DSH 的 Node 侧会扫描 cordis 配置里启用的包，发现 `dsh.client` 声明后，通过 `/plugins/dsh-wallpaper/client.js` 把浏览器半提供给前端——**不需要重新构建前端**，重启 `dsh web` 即生效。
+> 本包同时声明 `dsh.bundle`（自动装载层）和 `dsh.client`（浏览器半），因此
+> `dsh plugin add` 会把它**自动加入 `dsh.profile.bundles`**，无需你手改任何配置文件。
 
 ```bash
-# 1. 安装插件到 web profile 的 node_modules（本地路径或 GitHub 均可）
-dsh plugin --profile web add /path/to/dsh-wallpaper
-# 或从 GitHub：
-dsh plugin --profile web add github:<你的账号>/dsh-wallpaper
+# 从 GitHub 安装（或本地路径 /path/to/dsh-wallpaper）
+dsh plugin --profile web add github:RNlao/dsh-wallpaper
 
-# 2. 编辑 $DSH_HOME/profiles/web/cordis.patch.yml，加入（见 cordis.patch.example.yml）：
-#    - insert:
-#        - id: dsh-wallpaper
-#          name: dsh-wallpaper
-
-# 3. 重启
-#    Ctrl-C 停掉当前 dsh web，再 dsh web 启动
+# 重启 dsh web 即生效（Ctrl-C 停掉当前进程，再 dsh web 启动）
 ```
 
 重启后打开 **设置（左下角）→ 壁纸 / Wallpaper** 即可使用。
 
-> `$DSH_HOME` 默认是 `~/.dsh`。若 `cordis.patch.yml` 目前是 `[]`，直接用 example 里的 `insert` 段替换 `[]`。
+> 原理：`dsh plugin` 装包后会 reconcile——检测到本包声明了 `dsh.bundle.patch`，就自动追加进 `dsh.profile.bundles`，作为 profile layer 应用 `cordis.patch.yml`（insert host 半）；随后 `dsh-client-modules` 扫描到 `dsh.client` 声明，通过 `/plugins/dsh-wallpaper/client.js` 提供浏览器半。全程**不需要重新构建前端**、也**不需要手写配置**。
 
 ## 安装（动态插件，临时，备选）
 
