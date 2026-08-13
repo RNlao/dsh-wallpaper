@@ -21,18 +21,24 @@ dsh-wallpaper/
 └── README.md
 ```
 
-## 安装（持久化，免手写配置）
+## 安装（持久化）
+
+本插件有 **host 半**（读写磁盘图片）和 **client 半**（界面）。DSH 全局安装时，loader 用 Node ESM 从**全局 node_modules** 解析插件，因此 host 半必须能被全局解析到。分两步：
 
 ```bash
-# 从 GitHub 安装（或本地路径 /path/to/dsh-wallpaper）
-dsh plugin --profile web add github:RNlao/dsh-wallpaper
+# 1. clone 仓库并链接到全局 node_modules（让 host 半能被 loader import）
+git clone https://github.com/RNlao/dsh-wallpaper.git
+ln -sfn "$(pwd)/dsh-wallpaper" "$(npm root -g)/dsh-wallpaper"
 
-# 重启 dsh web 即生效
+# 2. 注册为 profile 的 bundle（dsh plugin add 会自动加入 dsh.profile.bundles）
+dsh plugin --profile web add "$(pwd)/dsh-wallpaper"
+
+# 3. 重启 dsh web
 ```
 
 重启后打开 **设置（左下角）→ 壁纸 / Wallpaper**。
 
-> 原理：`dsh plugin` 装包后 detect 到本包声明了 `dsh.bundle.patch`，自动加入 `dsh.profile.bundles`，作为 profile layer 应用 `cordis.patch.yml`（insert host 半）；`dsh-client-modules` 扫描 `dsh.client` 声明，通过 `/plugins/dsh-wallpaper/client.js` 提供浏览器半。host 半则通过 `webServer` 暴露 `/dsh-wallpaper/*` 路由给浏览器读写磁盘图片。全程无需手写配置、无需重新构建前端。
+> 原理：`dsh plugin add` 会把包装进 profile 的 node_modules 并 detect 到 `dsh.bundle.patch`、自动加入 `dsh.profile.bundles`（bundle patch 的 `insert` 由此生效）；`dsh-client-modules` 扫描 `dsh.client` 声明，通过 `/plugins/dsh-wallpaper/client.js` 提供浏览器半。**host 半则必须额外链接到全局 node_modules**——这是 DSH 全局安装下 loader 的模块解析要求（否则 `/dsh-wallpaper/*` 路由不注册，上传会失败）。host 半通过 `webServer` 暴露这些路由读写磁盘图片。
 
 ## 功能
 
