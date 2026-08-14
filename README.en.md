@@ -2,7 +2,7 @@
 
 [中文](./README.md) | **English**
 
-<p align="center"><img src="docs/cover.png" alt="dsh-wallpaper" width="800" /></p>
+<p align="center"><img src="https://repository-images.githubusercontent.com/1333486205/208d5ee9-1233-4bdb-a99c-f985e7ccd975" alt="dsh-wallpaper" width="800" /></p>
 
 Set a custom background for the DSH web GUI: no-wallpaper mode, gradient presets, image upload, **folder import**, **crop**, **blur**, dim overlay, panel translucency, text color/shadow, **contrast protection**, and fit/position controls — with a switchable Chinese / English UI.
 

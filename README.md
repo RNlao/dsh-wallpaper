@@ -2,7 +2,7 @@
 
 **中文** | [English](./README.en.md)
 
-<p align="center"><img src="docs/cover.png" alt="dsh-wallpaper" width="800" /></p>
+<p align="center"><img src="https://repository-images.githubusercontent.com/1333486205/208d5ee9-1233-4bdb-a99c-f985e7ccd975" alt="dsh-wallpaper" width="800" /></p>
 
 让用户在 DSH Web 界面更换背景图片的插件，支持：无壁纸、预设渐变、上传图片、**导入文件夹**、**裁剪图片**、**模糊**、遮罩、面板半透明、文字颜色/阴影、**对比保护**、填充与位置调整，界面可切换中文 / English。
 
