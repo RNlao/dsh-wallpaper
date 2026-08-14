@@ -4,8 +4,6 @@ Set a custom background for the DSH web GUI: no-wallpaper mode, gradient presets
 
 Images are stored as **raw bytes in browser IndexedDB** (no compression, no base64, no 5MB localStorage cap) and displayed via object URLs. The current selection and effect settings live in `localStorage`.
 
-> 中文说明见 [README.zh.md](README.zh.md)。
-
 ## Install
 
 **Recommended — one command** (`dsh plugin add` switches into the profile directory, runs pnpm add, and reconciles the package into `dsh.profile.bundles` for you):
