@@ -40,6 +40,33 @@ Whichever way you install, these three must all hold (otherwise DSH throws `ERR_
 
 > A global `npm install -g` does **not** help — Node's ESM resolution never looks in global packages. A `link:` symlink is the easiest option (edit code, restart, no reinstall).
 
+## Platform compatibility
+
+The plugin itself is **cross-platform**: it's a pure browser implementation (IndexedDB / FileReader / canvas / object URL) with an empty host half, so it contains no OS-specific code and behaves identically on Windows / macOS / Linux. Only the install path syntax and keyboard shortcuts differ:
+
+**macOS / Linux**
+
+```bash
+git clone https://github.com/RNlao/dsh-wallpaper.git
+dsh plugin --profile web add link:/path/to/dsh-wallpaper
+```
+
+- DSH home defaults to `~/.dsh`; the profile lives at `~/.dsh/profiles/web`.
+- Hard refresh: `Cmd+Shift+R` (macOS) or `Ctrl+Shift+R` (Linux).
+
+**Windows (PowerShell / CMD)**
+
+```powershell
+git clone https://github.com/RNlao/dsh-wallpaper.git
+dsh plugin --profile web add "link:C:\path\to\dsh-wallpaper"
+```
+
+- DSH home defaults to `%USERPROFILE%\.dsh` (i.e. `C:\Users\<you>\.dsh`); the profile lives at `%USERPROFILE%\.dsh\profiles\web`.
+- If the path **contains spaces**, `dsh plugin add` splits the argument — instead `cd` into the profile directory and run `pnpm add "link:C:\path with space\dsh-wallpaper"` (quoted).
+- Hard refresh: `Ctrl+Shift+R`.
+
+> Folder import relies on `webkitdirectory`, which is a **browser** feature (Chrome / Edge / Safari support it, Firefox does not) — independent of the operating system.
+
 ## Features
 
 - **No wallpaper**: restore the stock DSH look (the default state — the plugin does nothing until you pick a background).
