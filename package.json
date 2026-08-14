@@ -13,6 +13,7 @@
     "lib/index.js",
     "lib/client.js",
     "cordis.patch.yml",
+    "install.mjs",
     "README.md",
     "README.en.md"
   ],

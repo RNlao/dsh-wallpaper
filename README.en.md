@@ -8,64 +8,34 @@ Images are stored as **raw bytes in browser IndexedDB** (no compression, no base
 
 ## Install
 
-**Recommended — one command** (`dsh plugin add` switches into the profile directory, runs pnpm add, and reconciles the package into `dsh.profile.bundles` for you):
+**One-command install (recommended, cross-platform):**
 
 ```bash
 git clone https://github.com/RNlao/dsh-wallpaper.git
+cd dsh-wallpaper
+node install.mjs
+```
 
-# link: points at the cloned directory; editing the code only needs a restart
+The script detects the DSH home (`$DSH_HOME` or `~/.dsh`), creates the symlink, and writes the package into `dependencies` and `dsh.profile.bundles`. To uninstall: `node install.mjs --uninstall`.
+
+**Manual install (alternative):**
+
+```bash
 dsh plugin --profile web add link:/path/to/dsh-wallpaper
 ```
 
-Then **restart `dsh web`** (Ctrl-C and start again) and **hard-refresh the browser** (`Cmd+Shift+R`). Open **Settings (bottom-left) → Wallpaper**.
-
-### Why the manual docs used `cd ~/.dsh/profiles/web`
-
-That was the manual pnpm path: `pnpm add` must run **inside the profile directory** (`~/.dsh/profiles/web`, the pnpm workspace root) so the dependency lands in that profile's `package.json` and `node_modules`:
-
-```bash
-cd ~/.dsh/profiles/web
-pnpm add 'dsh-wallpaper@link:/path/to/dsh-wallpaper'
-```
-
-`dsh plugin add` does exactly that `cd` + `pnpm add` internally, so it's the recommended form — no manual `cd` needed.
-
-### Three hard requirements
-
-Whichever way you install, these three must all hold (otherwise DSH throws `ERR_MODULE_NOT_FOUND` when importing the host half from the profile directory):
-
-1. `~/.dsh/profiles/web/package.json` has `"dsh-wallpaper": "link:…"` in `dependencies`;
-2. `~/.dsh/profiles/web/node_modules/dsh-wallpaper` exists (a link symlink or a real directory);
-3. the `dsh.profile.bundles` array contains `"dsh-wallpaper"`.
-
-> A global `npm install -g` does **not** help — Node's ESM resolution never looks in global packages. A `link:` symlink is the easiest option (edit code, restart, no reinstall).
+After installing: restart `dsh web`, hard-refresh the browser, then open **Settings → Wallpaper**.
 
 ## Platform compatibility
 
-The plugin itself is **cross-platform**: it's a pure browser implementation (IndexedDB / FileReader / canvas / object URL) with an empty host half, so it contains no OS-specific code and behaves identically on Windows / macOS / Linux. Only the install path syntax and keyboard shortcuts differ:
+The plugin itself is **cross-platform** (a pure browser implementation with an empty host half — no OS-specific code), so it behaves identically on Windows / macOS / Linux. Only paths and shortcuts differ:
 
-**macOS / Linux**
+- **DSH home**: `~/.dsh` on macOS / Linux; `%USERPROFILE%\.dsh` on Windows.
+- **Manual install path**: Windows uses `link:C:\path\to\dsh-wallpaper`; if the path contains spaces, `cd` into the profile directory and run `pnpm add "link:…"` (quoted).
+- **Hard refresh**: `Cmd+Shift+R` on macOS; `Ctrl+Shift+R` on Windows / Linux.
+- **Folder import** relies on `webkitdirectory`, a browser feature (Chrome / Edge / Safari support it, Firefox does not) — independent of the operating system.
 
-```bash
-git clone https://github.com/RNlao/dsh-wallpaper.git
-dsh plugin --profile web add link:/path/to/dsh-wallpaper
-```
-
-- DSH home defaults to `~/.dsh`; the profile lives at `~/.dsh/profiles/web`.
-- Hard refresh: `Cmd+Shift+R` (macOS) or `Ctrl+Shift+R` (Linux).
-
-**Windows (PowerShell / CMD)**
-
-```powershell
-git clone https://github.com/RNlao/dsh-wallpaper.git
-dsh plugin --profile web add "link:C:\path\to\dsh-wallpaper"
-```
-
-- DSH home defaults to `%USERPROFILE%\.dsh` (i.e. `C:\Users\<you>\.dsh`); the profile lives at `%USERPROFILE%\.dsh\profiles\web`.
-- If the path **contains spaces**, `dsh plugin add` splits the argument — instead `cd` into the profile directory and run `pnpm add "link:C:\path with space\dsh-wallpaper"` (quoted).
-- Hard refresh: `Ctrl+Shift+R`.
-
-> Folder import relies on `webkitdirectory`, which is a **browser** feature (Chrome / Edge / Safari support it, Firefox does not) — independent of the operating system.
+`node install.mjs` handles these path differences for you.
 
 ## Features
 

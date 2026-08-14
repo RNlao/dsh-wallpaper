@@ -8,65 +8,34 @@
 
 ## 安装
 
-**推荐：一条命令（`dsh plugin add` 内部会自动切换到 profile 目录、执行 pnpm add、并把本包 reconcile 进 `dsh.profile.bundles`）。**
+**一键安装（推荐，跨平台）：**
 
 ```bash
-# 先 clone 仓库
 git clone https://github.com/RNlao/dsh-wallpaper.git
+cd dsh-wallpaper
+node install.mjs
+```
 
-# 安装（link: 指向 clone 出来的目录；以后改代码重启即生效，无需重装）
+脚本会自动检测 DSH 数据目录（`$DSH_HOME` 或 `~/.dsh`）、创建软链接、并把本包写进 `dependencies` 与 `dsh.profile.bundles`。卸载：`node install.mjs --uninstall`。
+
+**手动安装（备选）：**
+
+```bash
 dsh plugin --profile web add link:/path/to/dsh-wallpaper
 ```
 
-然后 **重启 `dsh web`**（Ctrl-C 停掉再启动），浏览器 **强刷**（`Cmd+Shift+R`）。打开 **设置（左下角）→ 壁纸 / Wallpaper** 即可用。
-
-### 为什么之前的文档里有 `cd ~/.dsh/profiles/web`
-
-那是「手动用 pnpm 安装」的写法。因为 `pnpm add` 必须在 **profile 目录**（`~/.dsh/profiles/web`，即 pnpm workspace 的根）里运行，才能把依赖写进该 profile 的 `package.json` 和 `node_modules`：
-
-```bash
-cd ~/.dsh/profiles/web
-pnpm add 'dsh-wallpaper@link:/path/to/dsh-wallpaper'
-```
-
-`dsh plugin add` 其实就是在内部做了这个 `cd` + `pnpm add`，所以推荐用它，省得手动 `cd`。
-
-### 安装的三条硬性要求
-
-无论哪种方式，最后必须满足（否则 DSH 从 profile 目录 import host 半时会抛 `ERR_MODULE_NOT_FOUND`）：
-
-1. `~/.dsh/profiles/web/package.json` 的 `dependencies` 里有 `"dsh-wallpaper": "link:…"`；
-2. `~/.dsh/profiles/web/node_modules/dsh-wallpaper` 存在（link 软链接或真实目录均可）；
-3. `dsh.profile.bundles` 数组里包含 `"dsh-wallpaper"`。
-
-> 注意：`npm install -g` 全局安装无效——Node 的 ESM 解析不会查找全局包。用 `link:` 软链接是最省心的方式（改代码免重装）。
+安装后：重启 `dsh web`，浏览器强刷，打开 **设置 → 壁纸 / Wallpaper**。
 
 ## 平台兼容性
 
-插件本身**跨平台**：纯浏览器实现（IndexedDB / FileReader / canvas / object URL），host 半为空插件，不含任何操作系统特定代码，Windows / macOS / Linux 功能完全一致。仅安装命令的路径写法与快捷键不同：
+插件本身**跨平台**（纯浏览器实现，host 半为空插件，无操作系统特定代码），Windows / macOS / Linux 功能一致，差异仅在路径与快捷键：
 
-**macOS / Linux**
+- **数据目录**：macOS / Linux 默认 `~/.dsh`；Windows 默认 `%USERPROFILE%\.dsh`。
+- **手动安装路径**：Windows 用 `link:C:\path\to\dsh-wallpaper`；路径含空格时，改用 `cd` 进 profile 目录后 `pnpm add "link:…"`（加引号）。
+- **浏览器强刷**：macOS `Cmd+Shift+R`；Windows / Linux `Ctrl+Shift+R`。
+- **导入文件夹**依赖 `webkitdirectory`，是浏览器特性（Chrome / Edge / Safari 支持，Firefox 不支持），与操作系统无关。
 
-```bash
-git clone https://github.com/RNlao/dsh-wallpaper.git
-dsh plugin --profile web add link:/path/to/dsh-wallpaper
-```
-
-- DSH 数据目录默认 `~/.dsh`，profile 目录 `~/.dsh/profiles/web`。
-- 浏览器强刷：macOS `Cmd+Shift+R`，Linux `Ctrl+Shift+R`。
-
-**Windows（PowerShell / CMD）**
-
-```powershell
-git clone https://github.com/RNlao/dsh-wallpaper.git
-dsh plugin --profile web add "link:C:\path\to\dsh-wallpaper"
-```
-
-- DSH 数据目录默认 `%USERPROFILE%\.dsh`（即 `C:\Users\<你>\.dsh`），profile 目录 `%USERPROFILE%\.dsh\profiles\web`。
-- 若路径**含空格**，`dsh plugin add` 会把参数拆断——请先 `cd` 进 profile 目录，再 `pnpm add "link:C:\path with space\dsh-wallpaper"`（加引号）。
-- 浏览器强刷：`Ctrl+Shift+R`。
-
-> 导入文件夹依赖 `webkitdirectory`，这是**浏览器**特性（Chrome / Edge / Safari 支持，Firefox 不支持），与操作系统无关。
+用 `node install.mjs` 一键安装可自动处理上述路径差异。
 
 ## 功能
 
