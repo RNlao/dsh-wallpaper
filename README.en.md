@@ -2,7 +2,9 @@
 
 [中文](./README.md) | **English**
 
-Set a custom background for the DSH web GUI: no-wallpaper mode, gradient presets, image upload, **folder import**, **crop**, **blur**, dim overlay, panel translucency, text color/shadow, and fit/position controls.
+<p align="center"><img src="docs/cover.png" alt="dsh-wallpaper" width="800" /></p>
+
+Set a custom background for the DSH web GUI: no-wallpaper mode, gradient presets, image upload, **folder import**, **crop**, **blur**, dim overlay, panel translucency, text color/shadow, **contrast protection**, and fit/position controls — with a switchable Chinese / English UI.
 
 Images are stored as **raw bytes in browser IndexedDB** (no compression, no base64, no 5MB localStorage cap) and displayed via object URLs. The current selection and effect settings live in `localStorage`.
 
@@ -44,7 +46,8 @@ The plugin itself is **cross-platform** (a pure browser implementation with an e
 - **Image library**: uploaded / imported / cropped images (thumbnail grid, delete, click to set as background).
 - **Crop**: drag to select the region to keep, export a new image.
 - **Blur** 0–50px, **dim** 0–0.9, **panel opacity** 0.3–1.0.
-- **Text readability**: text color (auto / light / dark) + text shadow.
+- **UI language**: switch between Chinese and English at the top of the settings page.
+- **Text readability**: text color (auto / light / dark, scoped to chat content) + text shadow + **contrast protection** (off / balanced / strong, adds a theme-aware backing to reasoning blocks and input hints).
 - **Fit & position**: cover / contain / stretch; horizontal and vertical position.
 
 ## Storage
@@ -57,7 +60,7 @@ The plugin itself is **cross-platform** (a pure browser implementation with an e
 - **Background layer**: `body::before` (fixed, `z-index:-1`) holds the image/gradient, `body::after` holds the dim overlay; `body{isolation:isolate}` keeps the negative-z layers under the app content.
 - **Panel translucency (scoped)**: `ctx.theme.overrideTokens` makes only **three** large-area tokens translucent — `--dsw-alias-bg-base` (main canvas), `--dsw-specific-sidebar-fill` (sidebar), `--dsw-specific-input-major` (input box). Inner surfaces (`bg-layer-*`, menus, bubbles) stay opaque so text stays readable and the UI never feels "too transparent".
 - **Image storage**: images are kept as Blobs in IndexedDB; `URL.createObjectURL(blob)` produces temporary URLs for `<img>`/CSS, revoked with `revokeObjectURL` after use. Thumbnails load on demand (`GalleryThumb` reads on mount, releases on unmount).
-- **Text color**: overrides `--dsw-alias-label-*` tokens; text shadow uses `text-shadow`.
+- **Text color & contrast protection**: text color is injected only into the chat session subtree (`[data-slot="conversation.session"]`), never leaking into Settings, Trajectory, or the sidebar; contrast protection adds a theme-aware translucent backing to reasoning blocks (`[data-variant="think"]`) and input hints (`[data-decoration="hint"]`).
 - **Settings page**: `slots.inject('settings.section', …)` registers the "Wallpaper" section.
 - **Lifecycle**: styles, token overrides, slot registration, and object URLs are all owned by the plugin fiber and cleaned up on disable/unload.
 
