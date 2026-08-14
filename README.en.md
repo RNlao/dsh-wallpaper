@@ -61,11 +61,11 @@ The plugin itself is **cross-platform** (a pure browser implementation with an e
 ## How it works
 
 - **Background layer**: `body::before` (fixed, `z-index:-1`) holds the active Main UI or Trajectory image/gradient. `:has([data-trajectory-scroll])` identifies the active Trajectory view, so the session header, sidebar and current view share the active page wallpaper.
-- **Panel translucency**: Main UI and the Trajectory workspace both use adjustable translucent surfaces through DSH theme tokens; Trajectory's toolbar, timeline, table and sticky headers remain transparent over the same wallpaper. The sidebar root receives a light translucent surface over the active page wallpaper. Small controls, menus, hover and selection states keep the surfaces they need. Turning the master switch off disposes every override.
+- **Panel translucency**: Main UI and Trajectory use adjustable translucent surfaces. The sidebar keeps a slightly stronger layer to distinguish navigation, while the input retains a light surface. Small controls, menus, hover, and selection states keep the contrast they need. Turning off the master switch restores the original DSH appearance.
 - **Image storage**: images are kept as Blobs in IndexedDB; `URL.createObjectURL(blob)` produces temporary URLs for `<img>`/CSS, revoked with `revokeObjectURL` after use. Thumbnails load on demand (`GalleryThumb` reads on mount, releases on unmount).
 - **Text color and Trajectory schemes**: the Main UI color applies to the session header, conversation text tokens, thinking, tool calls and composer hints through a positive region allowlist that excludes DSH settings. One selected Trajectory scheme consistently controls its toolbar, timeline, search, table text and icons, choosing its light or dark palette from the DSH appearance. Semantic status colors remain distinct, and the solid approval action explicitly retains white text for contrast.
 - **Settings page**: `slots.inject('settings.section', …)` registers the "Wallpaper" section. The toolbar switches between Main UI and Trajectory; Trajectory follows Main UI by default. Plugin settings controls use the native DSH theme tokens.
-- **Lifecycle**: styles, token overrides, slot registration, and object URLs are all owned by the plugin fiber and cleaned up on disable/unload.
+- **Lifecycle**: styles, slot registration, and object URLs are owned by the plugin fiber and cleaned up on disable/unload.
 
 ## Known limitations
 
