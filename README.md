@@ -10,34 +10,46 @@
 
 ## 安装
 
-**一键安装（推荐，跨平台）：**
+### 从 GitHub 安装（推荐）
+
+```bash
+dsh plugin --profile web add github:RNlao/dsh-wallpaper#v0.1.0
+```
+
+### 从 Release 安装
+
+下载 [dsh-wallpaper-0.1.0.tgz](https://github.com/RNlao/dsh-wallpaper/releases/download/v0.1.0/dsh-wallpaper-0.1.0.tgz)，然后执行：
+
+```bash
+dsh plugin --profile web add /path/to/dsh-wallpaper-0.1.0.tgz
+```
+
+### 从源码安装 / 开发链接（非持久安装）
 
 ```bash
 git clone https://github.com/RNlao/dsh-wallpaper.git
-cd dsh-wallpaper
-node install.mjs
+dsh plugin --profile web add link:./dsh-wallpaper
 ```
 
-脚本会自动检测 DSH 数据目录（`$DSH_HOME` 或 `~/.dsh`）、创建软链接、并把本包写进 `dependencies` 与 `dsh.profile.bundles`。卸载：`node install.mjs --uninstall`。
+也可以在仓库主页选择 **Code → Download ZIP**，解压后从上一级目录执行 `dsh plugin --profile web add link:./dsh-wallpaper-main`。如果 `web` profile 尚未初始化，先运行一次 `dsh web`。
 
-**手动安装（备选）：**
+`link:` 是开发链接，不是持久化安装：插件会持续依赖该源码目录，目录移动或删除后插件会失效。源码只需链接一次；修改 `lib/client.js` 不需要重新 link 或重启服务，DSH client HMR 会自动重载，未立即反映时再强刷浏览器。
 
-```bash
-dsh plugin --profile web add link:/path/to/dsh-wallpaper
-```
+### 生效与更新
 
-安装后：重启 `dsh web`，浏览器强刷，打开 **设置 → 壁纸 / Wallpaper**。
+- **首次安装或卸载**：如果 `dsh web` 正在运行，需要重启该进程并强刷浏览器，使新的 profile bundle 列表生效。
+- **host 或挂载配置变化**：需要重启 `dsh web`。本插件当前 host 半为空实现，日常开发通常只有 client 改动。
+
+安装后打开 **设置 → 壁纸 / Wallpaper**。卸载：`dsh plugin --profile web remove dsh-wallpaper`。
 
 ## 平台兼容性
 
 插件本身**跨平台**（纯浏览器实现，host 半为空插件，无操作系统特定代码），Windows / macOS / Linux 功能一致，差异仅在路径与快捷键：
 
 - **数据目录**：macOS / Linux 默认 `~/.dsh`；Windows 默认 `%USERPROFILE%\.dsh`。
-- **手动安装路径**：Windows 用 `link:C:\path\to\dsh-wallpaper`；路径含空格时，改用 `cd` 进 profile 目录后 `pnpm add "link:…"`（加引号）。
+- **安装命令**：GitHub、Release 和源码 `link:./dsh-wallpaper` 安装在各平台相同。
 - **浏览器强刷**：macOS `Cmd+Shift+R`；Windows / Linux `Ctrl+Shift+R`。
 - **导入文件夹**依赖 `webkitdirectory`，是浏览器特性（Chrome / Edge / Safari 支持，Firefox 不支持），与操作系统无关。
-
-用 `node install.mjs` 一键安装可自动处理上述路径差异。
 
 ## 功能
 

@@ -10,34 +10,46 @@ Images are stored as **raw bytes in browser IndexedDB** (no compression, no base
 
 ## Install
 
-**One-command install (recommended, cross-platform):**
+### Install from GitHub (recommended)
+
+```bash
+dsh plugin --profile web add github:RNlao/dsh-wallpaper#v0.1.0
+```
+
+### Install from a Release
+
+Download [dsh-wallpaper-0.1.0.tgz](https://github.com/RNlao/dsh-wallpaper/releases/download/v0.1.0/dsh-wallpaper-0.1.0.tgz), then run:
+
+```bash
+dsh plugin --profile web add /path/to/dsh-wallpaper-0.1.0.tgz
+```
+
+### Install from source / development link (not persistent)
 
 ```bash
 git clone https://github.com/RNlao/dsh-wallpaper.git
-cd dsh-wallpaper
-node install.mjs
+dsh plugin --profile web add link:./dsh-wallpaper
 ```
 
-The script detects the DSH home (`$DSH_HOME` or `~/.dsh`), creates the symlink, and writes the package into `dependencies` and `dsh.profile.bundles`. To uninstall: `node install.mjs --uninstall`.
+You can also choose **Code → Download ZIP** on the repository page, extract it, and run `dsh plugin --profile web add link:./dsh-wallpaper-main` from the parent directory. If the `web` profile has not been initialized, run `dsh web` once first.
 
-**Manual install (alternative):**
+`link:` is a development link, not a persistent install: the plugin continues to depend on that source directory and stops working if the directory is moved or deleted. The source only needs to be linked once; editing `lib/client.js` does not require relinking or restarting, and DSH client HMR reloads it. Hard-refresh if the change is not immediately visible.
 
-```bash
-dsh plugin --profile web add link:/path/to/dsh-wallpaper
-```
+### Activation and updates
 
-After installing: restart `dsh web`, hard-refresh the browser, then open **Settings → Wallpaper**.
+- **First install or uninstall**: if `dsh web` is already running, restart it and hard-refresh the browser so the new profile bundle list takes effect.
+- **Host or mount configuration changes**: restart `dsh web`. This plugin's host half is currently empty, so normal development only changes the client half.
+
+After installation, open **Settings → Wallpaper**. To uninstall: `dsh plugin --profile web remove dsh-wallpaper`.
 
 ## Platform compatibility
 
-The plugin itself is **cross-platform** (a pure browser implementation with an empty host half — no OS-specific code), so it behaves identically on Windows / macOS / Linux. Only paths and shortcuts differ:
+The plugin itself is **cross-platform** (a pure browser implementation with an empty host half and no OS-specific code). Only paths and shortcuts differ:
 
 - **DSH home**: `~/.dsh` on macOS / Linux; `%USERPROFILE%\.dsh` on Windows.
-- **Manual install path**: Windows uses `link:C:\path\to\dsh-wallpaper`; if the path contains spaces, `cd` into the profile directory and run `pnpm add "link:…"` (quoted).
+- **Install commands**: GitHub, Release, and source `link:./dsh-wallpaper` installs work the same on every platform.
 - **Hard refresh**: `Cmd+Shift+R` on macOS; `Ctrl+Shift+R` on Windows / Linux.
-- **Folder import** relies on `webkitdirectory`, a browser feature (Chrome / Edge / Safari support it, Firefox does not) — independent of the operating system.
-
-`node install.mjs` handles these path differences for you.
+- **Folder import** relies on `webkitdirectory`, a browser feature (Chrome / Edge / Safari support it, Firefox does not), independent of the operating system.
 
 ## Features
 
